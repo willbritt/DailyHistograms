@@ -60,7 +60,7 @@ var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,marg
                   .tickFormat(function(d, i){
                     return data[0].grades[i].name;
                   })
-
+ 
 
 
     var yAxis  = d3.axisLeft(yScale);
