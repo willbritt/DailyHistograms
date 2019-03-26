@@ -4,6 +4,14 @@ dataP.then(function(data)
 {
   console.log("data",data)
 
+
+  hwArray = data.map(function(d,i) { return d[1];})
+
+  hw1 = data[0].homework
+
+  console.log("Hw Grades",hwArray)
+  console.log("Hw Grades 1",hw1)
+
   var screen =
   {
     width: 600,
@@ -33,7 +41,7 @@ dataP.then(function(data)
               .nice()
 
   var binMaker = d3.histogram()
-                .domain.(xScale.domain())
+                .domain(xScale.domain())
                 .threshold(xScale.ticks(50));
 
 var bins = binMaker(data);
@@ -48,6 +56,7 @@ function(err)
 )
 
 
+
 var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,margins)
 {
   var svg = d3.select("svg")
@@ -60,7 +69,7 @@ var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,marg
                   .tickFormat(function(d, i){
                     return data[0].grades[i].name;
                   })
- 
+
 
 
     var yAxis  = d3.axisLeft(yScale);
@@ -73,8 +82,6 @@ var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,marg
          );
 
 
-
-
      svg.append("g")
        .classed(yAxis,true)
        .call(yAxis)
@@ -82,15 +89,12 @@ var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,marg
        + 5 +")");
 
 
-
-
     svg.selectAll("rect")
-        .data(data[0].grades)
+        .data(data[0].homework)
         .enter()
         .append("rect")
         .attr("height", function(d){return h-yScale(0);})
         .attr("width",barWidth-20)
         .attr("x", function(d, i){return xScale(i+.5);})
-        .attr("y", function(d, i){return yScale(d.grade);})
-        .attr("fill",function(d) {return colors(d.name);})
+        .attr("y", function(d, i){return yScale(d[0].homework[i].grade);})
 }
