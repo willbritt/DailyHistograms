@@ -1,16 +1,11 @@
 dataP = d3.json("classData.json");
 
+
+  var dayIndex = 0;
+
 dataP.then(function(data)
 {
   console.log("data",data)
-
-
-  hwArray = data.map(function(d,i) { return d[1];})
-
-  hw1 = data[0].homework
-
-  console.log("Hw Grades",hwArray)
-  console.log("Hw Grades 1",hw1)
 
   var screen =
   {
@@ -27,26 +22,33 @@ dataP.then(function(data)
       right: 50
     }
 
+
+
   var width = screen.width-margins.left-margins.right;
   var height = screen.height-margins.top-margins.bottom;
 
-  var barWidth = width/4;
+  var barWidth = width/51;
 
   var yScale = d3.scaleLinear()
-                .domain([0,d3.max(bins, function(d){return d;})])
+                .domain([0,data[0].homework[0].max])
                 .range([height,0]);
 
   var xScale = d3.scaleLinear()
-              .domain(d3.extent(data))
+              .domain([0,51])
               .nice()
+              .range([0,width])
+
+
+
+  var newData = getData(data, dayIndex);
 
   var binMaker = d3.histogram()
                 .domain(xScale.domain())
-                .threshold(xScale.ticks(50));
+                .thresholds(xScale.ticks(50));
 
-var bins = binMaker(data);
+var bins = binMaker(newData);
 
-setup(data,xScale,yScale,binMaker,bins,width,height,barwidth,margins)
+setup(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
 
 },
 
@@ -55,20 +57,22 @@ function(err)
 
 )
 
+var getData = function(data, dayIndex)
+{
+  var newData = []
 
+  data.forEach(function(d,i) {newData.push(d.homework[dayIndex]);})
 
-var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,margins)
+  return newData
+}
+
+var setup = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
 {
   var svg = d3.select("svg")
     .attr("width", 600)
     .attr("height",400)
 
     var xAxis  = d3.axisBottom(xScale)
-                  .scale(xScale)
-                  .tickValues([.5,1.5,2.5,3.5])
-                  .tickFormat(function(d, i){
-                    return data[0].grades[i].name;
-                  })
 
 
 
@@ -78,8 +82,8 @@ var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,marg
            .classed(xAxis,true)
            .call(xAxis)
            .attr("transform","translate("+margins.left+","
-           +(margins.top+ h)+")"
-         );
+           +(margins.top+h)+")"
+        );
 
 
      svg.append("g")
@@ -88,13 +92,14 @@ var setup = function(data,xScale,yScale,binMaker,bins,width,height,barwidth,marg
        .attr("transform","translate("+(margins.left-20)+","
        + 5 +")");
 
+console.log(bins)
 
     svg.selectAll("rect")
-        .data(data[0].homework)
+        .data(bins)
         .enter()
         .append("rect")
-        .attr("height", function(d){return h-yScale(0);})
-        .attr("width",barWidth-20)
+        .attr("height", function(d,i){return yScale(data.length-d.length);})
+        .attr("width",barWidth)
         .attr("x", function(d, i){return xScale(i+.5);})
-        .attr("y", function(d, i){return yScale(d[0].homework[i].grade);})
+        .attr("y", function(d, i){return yScale(h+margins.top-yScale(data.length - d.length));})
 }
