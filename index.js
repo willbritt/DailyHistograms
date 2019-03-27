@@ -100,6 +100,6 @@ console.log(bins)
         .append("rect")
         .attr("height", function(d,i){return yScale(data.length-d.length);})
         .attr("width",barWidth)
-        .attr("x", function(d, i){return xScale(i+.5);})
-        .attr("y", function(d, i){return yScale(h+margins.top-yScale(data.length - d.length));})
+        .attr("x", function(d, i){return margins.left+xScale(i+i*0.5);})
+        .attr("y", function(d, i){return yScale(data.length-d.length)-margins.top-10;})
 }
