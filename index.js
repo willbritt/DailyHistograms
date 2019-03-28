@@ -73,6 +73,9 @@ var setup = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
     .attr("height",400)
 
     var xAxis  = d3.axisBottom(xScale)
+                .scale(xScale)
+                .tickValues([5,15,25,35,45])
+                .tickFormat(function(d,i){return ""+bins[i].x0+"-"+bins[i].x1+"";})
 
 
 
@@ -99,7 +102,7 @@ console.log(bins)
         .enter()
         .append("rect")
         .attr("height", function(d,i){return h-yScale(d.length);})
-        .attr("width",barWidth)
-        .attr("x", function(d, i){return i*(w*5/(data.length))+margins.left;})
+        .attr("width", barWidth)
+        .attr("x", function(d, i){return i*(w*5/(data.length))+margins.left-18;})
         .attr("y", function(d, i){return h-yScale(data.length-d.length)+margins.top-5;})
 }
