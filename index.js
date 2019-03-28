@@ -27,14 +27,12 @@ dataP.then(function(data)
   var width = screen.width-margins.left-margins.right;
   var height = screen.height-margins.top-margins.bottom;
 
-  var barWidth = width/51;
-
   var yScale = d3.scaleLinear()
-                .domain([0,data[0].homework[0].max])
+                .domain([0,data.length])
                 .range([height,0]);
 
   var xScale = d3.scaleLinear()
-              .domain([0,51])
+              .domain([0,50])
               .nice()
               .range([0,width])
 
@@ -44,9 +42,11 @@ dataP.then(function(data)
 
   var binMaker = d3.histogram()
                 .domain(xScale.domain())
-                .thresholds(xScale.ticks(50));
+                .thresholds(xScale.ticks(5));
 
 var bins = binMaker(newData);
+
+var barWidth = width/bins.length;
 
 setup(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
 
@@ -61,7 +61,7 @@ var getData = function(data, dayIndex)
 {
   var newData = []
 
-  data.forEach(function(d,i) {newData.push(d.homework[dayIndex]);})
+  data.forEach(function(d,i) {newData.push(d.homework[dayIndex].grade);})
 
   return newData
 }
@@ -98,8 +98,8 @@ console.log(bins)
         .data(bins)
         .enter()
         .append("rect")
-        .attr("height", function(d,i){return yScale(data.length-d.length);})
+        .attr("height", function(d,i){return h-yScale(d.length);})
         .attr("width",barWidth)
-        .attr("x", function(d, i){return margins.left+xScale(i+i*0.5);})
-        .attr("y", function(d, i){return yScale(data.length-d.length)-margins.top-10;})
+        .attr("x", function(d, i){return i*(w*5/(data.length))+margins.left;})
+        .attr("y", function(d, i){return h-yScale(data.length-d.length)+margins.top-5;})
 }
