@@ -89,7 +89,7 @@ var setup = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
      svg.append("g")
        .classed(yAxis,true)
        .call(yAxis)
-       .attr("transform","translate("+(margins.left-20)+","
+       .attr("transform","translate("+(margins.left-10)+","
        + 5 +")");
 
 console.log(bins)
