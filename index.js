@@ -47,7 +47,8 @@ dataP.then(function(data)
 var bins = binMaker(newData);
 
 var barWidth = width/bins.length;
-makeButtons(newData)
+
+makeButtons(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
 setup(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
 update(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
 },
@@ -57,14 +58,15 @@ function(err)
 
 )
 
-var makeButtons = function(data)
+var makeButtons = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
 {
   d3.select("body").selectAll("button")
     .data(data)
     .enter()
     .append("button")
-    .text(function(d){return "Day: "+d.day})
-    //.attr("on", update(d))
+    .text(function(d,i){if(i<19){return "Day: "+d.homework[i].day;}})
+    .style("opacity", function(d,i){if(i>=19){return 0;}})
+    .attr("on", update(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins))
 }
 
 var getData = function(data, dayIndex)
