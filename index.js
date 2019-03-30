@@ -142,6 +142,7 @@ var update = function(dataIndex,data,xScale,yScale,binMaker,bins,w,h,barWidth,ma
         .attr("x", function(d, i){return i*(w*4.7/(data.length))+margins.left;})
         .attr("y", function(d, i){return h-yScale(data.length-d.length)+margins.top-5;})
         .style("opacity", function(d,i){if(i>=5){return 0;}})
+      
 
 
       text.text(function(d,i){return "Current Day: "+data[0].homework[dataIndex].day})
