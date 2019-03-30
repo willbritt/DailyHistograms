@@ -47,10 +47,11 @@ dataP.then(function(data)
 var bins = binMaker(newData);
 
 var barWidth = width/bins.length;
+var text = d3.select("body").append("text")
+.text("Current Day: 2")
 
-makeButtons(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
+makeButtons(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins,text)
 setup(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
-update(data,xScale,yScale,binMaker,bins,width,height,barWidth,margins)
 },
 
 function(err)
@@ -58,7 +59,7 @@ function(err)
 
 )
 
-var makeButtons = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
+var makeButtons = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins,text)
 {
   d3.select("body").selectAll("button")
     .data(data)
@@ -66,7 +67,9 @@ var makeButtons = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins
     .append("button")
     .text(function(d,i){if(i<19){return "Day: "+d.homework[i].day;}})
     .style("opacity", function(d,i){if(i>=19){return 0;}})
-    .attr("on", update(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins))
+    .style("display", "block")
+    .style("margin", "4px")
+    .on('click', function(d,i){ return update(i,data,xScale,yScale,binMaker,bins,w,h,barWidth,margins,text); });
 }
 
 var getData = function(data, dayIndex)
@@ -86,9 +89,8 @@ var setup = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
 
     var xAxis  = d3.axisBottom(xScale)
                 .scale(xScale)
-                .tickValues([5,15,25,35,45])
+                .tickValues([4.5,14.5,24.5,34.5,44.5])
                 .tickFormat(function(d,i){return ""+bins[i].x0+"-"+bins[i].x1+"";})
-
 
 
     var yAxis  = d3.axisLeft(yScale);
@@ -107,53 +109,41 @@ var setup = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
        .attr("transform","translate("+(margins.left-10)+","
        + 5 +")");
 
-console.log(bins)
+//console.log(bins)
 
     svg.selectAll("rect")
         .data(bins)
         .enter()
         .append("rect")
         .attr("height", function(d,i){return h-yScale(d.length);})
-        .attr("width", barWidth)
-        .attr("x", function(d, i){return i*(w*5/(data.length))+margins.left-18;})
+        .attr("width", barWidth-5)
+        .attr("fill", "steelblue")
+        .attr("x", function(d, i){return i*(w*4.7/(data.length))+margins.left;})
         .attr("y", function(d, i){return h-yScale(data.length-d.length)+margins.top-5;})
+
+
+
 }
 
-var update = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
+var update = function(dataIndex,data,xScale,yScale,binMaker,bins,w,h,barWidth,margins,text)
 {
-  var svg = d3.select("svg")
+    var svg = d3.select("svg")
+    console.log("Click")
+    var dataToUpdate = getData(data, dataIndex);
+    var binsNew = binMaker(dataToUpdate);
 
-    var xAxis  = d3.axisBottom(xScale)
-                .scale(xScale)
-                .tickValues([5,15,25,35,45])
-                .tickFormat(function(d,i){return ""+bins[i].x0+"-"+bins[i].x1+"";})
-
-
-
-    var yAxis  = d3.axisLeft(yScale);
-
-    svg.append("g")
-           .classed(xAxis,true)
-           .call(xAxis)
-           .attr("transform","translate("+margins.left+","
-           +(margins.top+h)+")"
-        );
-
-
-     svg.append("g")
-       .classed(yAxis,true)
-       .call(yAxis)
-       .attr("transform","translate("+(margins.left-10)+","
-       + 5 +")");
-
-console.log(bins)
 
     svg.selectAll("rect")
-        .data(bins)
-        .enter()
-        .append("rect")
+        .data(binsNew)
+        .transition()
         .attr("height", function(d,i){return h-yScale(d.length);})
-        .attr("width", barWidth)
-        .attr("x", function(d, i){return i*(w*5/(data.length))+margins.left-18;})
+        .attr("width", barWidth-5)
+        .attr("fill", "steelblue")
+        .attr("x", function(d, i){return i*(w*4.7/(data.length))+margins.left;})
         .attr("y", function(d, i){return h-yScale(data.length-d.length)+margins.top-5;})
+        .style("opacity", function(d,i){if(i>=5){return 0;}})
+
+
+      text.text(function(d,i){return "Current Day: "+data[0].homework[dataIndex].day})
+
 }
