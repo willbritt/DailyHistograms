@@ -99,15 +99,23 @@ var setup = function(data,xScale,yScale,binMaker,bins,w,h,barWidth,margins)
            .classed(xAxis,true)
            .call(xAxis)
            .attr("transform","translate("+margins.left+","
-           +(margins.top+h)+")"
-        );
+           +(margins.top+h)+")");
+
+    svg.append("text")
+      .attr("transform","translate(" + (w/2) + " ," + (h + 50) + ")")
+      .text("Homework Grade");
 
 
      svg.append("g")
        .classed(yAxis,true)
        .call(yAxis)
-       .attr("transform","translate("+(margins.left-10)+","
-       + 5 +")");
+       .attr("transform","translate("+(margins.left-10)+"," + 5 +")");
+
+     svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x",0 - ((h/ 2) + 75))
+      .attr("y", 10)
+      .text("Number of Occurences");
 
 //console.log(bins)
 
@@ -142,7 +150,7 @@ var update = function(dataIndex,data,xScale,yScale,binMaker,bins,w,h,barWidth,ma
         .attr("x", function(d, i){return i*(w*4.7/(data.length))+margins.left;})
         .attr("y", function(d, i){return h-yScale(data.length-d.length)+margins.top-5;})
         .style("opacity", function(d,i){if(i>=5){return 0;}})
-      
+
 
 
       text.text(function(d,i){return "Current Day: "+data[0].homework[dataIndex].day})
